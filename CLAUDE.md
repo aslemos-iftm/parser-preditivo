@@ -32,10 +32,16 @@ O professor quer **entender cada mudança**, mesmo sem escrever o código. Por i
 - Não reescreva o que não foi pedido. Preserve o estilo e os nomes em português do código original.
 - Este código também é lido por estudantes iniciantes. Prefira clareza a esperteza.
 
-## Cuidados específicos
+## Premissas didáticas do código
 
-- Nas produções vazias (ε), `insereSubarvore` recebe a cadeia `""` e cria um nó com o caractere `'\0'`. Esse nó marca que o não terminal já foi expandido: `insereProd` procura o primeiro não terminal **sem filhos**. Não remova esse nó sem substituir a marcação por outra.
-- O programa deve compilar sem avisos com `gcc -Wall -Wextra -std=c11 src/*.c -o parser`.
+Algumas escolhas que parecem defeitos são deliberadas: o código foi escrito para ser lido por iniciantes, e a legibilidade tem prioridade. Antes de mudar qualquer uma delas, explique o problema e proponha a mudança; não a faça por conta própria.
+
+- **Os nós vazios.** Nas produções vazias (ε), `insereSubarvore` recebe a cadeia `""` e cria um nó com o caractere `'\0'`. Isso deixa explícita, na árvore e na sua impressão, a aplicação da produção vazia. O nó também é estrutural: `insereProd` procura o primeiro não terminal **sem filhos**, e o nó vazio é o que marca que `R` ou `B` já foram expandidos. Removê-lo quebra a construção da árvore.
+- **A entrada simples.** A expressão é lida com `scanf("%s")` num vetor de `INPUTSIZE` (20) caracteres. É a forma mais simples de leitura para quem está começando; o risco de uma entrada longa demais é conhecido.
+- **O `$` no fim da entrada.** Marca o fim da cadeia, como na teoria dos parsers preditivos. Tem valor didático e deve ser mantido.
+- **A tabela escrita à mão** em `preencheTabela`, entrada por entrada, para que se veja a tabela de lookahead no código.
+
+O programa deve compilar sem avisos com `gcc -Wall -Wextra -std=c11 src/*.c -o parser`.
 
 ## Compilar e testar
 
