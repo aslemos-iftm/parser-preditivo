@@ -51,7 +51,7 @@ void libera (Pilha* p)
     }
     free(p);
 }
-//Imprime o conteúdo da pilha
+//Imprime o conteÃºdo da pilha
 void imprime (Pilha* p)
 {
     No* q;
