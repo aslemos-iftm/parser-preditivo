@@ -1,0 +1,12 @@
+# Executáveis e objetos gerados pela compilação
+# (são refeitos a cada compilação, não precisam ser versionados)
+parser
+parser.exe
+*.exe
+*.o
+*.obj
+
+# Arquivos do VSCode e do sistema
+.vscode/
+Thumbs.db
+.DS_Store
