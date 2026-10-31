@@ -24,7 +24,7 @@ char pop (Pilha* p);
 int vazia (Pilha* p);
 //Libera memoria alocada para elementos da pilha
 void libera (Pilha* p);
-//Imprime o conteúdo da pilha
+//Imprime o conteÃºdo da pilha
 void imprime (Pilha* p);
 int comprimento (Pilha* p);
 
