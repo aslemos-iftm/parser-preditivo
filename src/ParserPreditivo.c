@@ -75,7 +75,7 @@ void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
             }
             else {
                 pop(p);
-                i++; //Lê o proximo simbolo
+                i++; //LÃª o proximo simbolo
             }
         }
         else {
@@ -92,7 +92,7 @@ void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
                 for(j=strlen(t[k].regra)-1;j>-1;j--){
                     push(p,t[k].regra[j]);
                 }
-                insereSubarvore(a,t[k].regra); //Insere na árvore o lado direito da producao table[A][c]
+                insereSubarvore(a,t[k].regra); //Insere na Ã¡rvore o lado direito da producao table[A][c]
             }
         }
     }
