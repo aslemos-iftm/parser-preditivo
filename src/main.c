@@ -4,7 +4,7 @@
 //#include "ArvoreAutomato.h"
 #include "ParserPreditivo.h"
 
-void main ()
+int main ()
 {
     char c,expressao[INPUTSIZE];
     Pilha* pilhaExp;
