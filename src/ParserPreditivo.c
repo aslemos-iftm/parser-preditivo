@@ -65,7 +65,8 @@ void preencheTabela(Tabela *t, int n)
 }
 
 void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
-    int i=0,j,k;
+    size_t i=0;
+    int j,k;
 
     while (vazia(p)==0 && i<strlen(expressao)) {
 

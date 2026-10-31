@@ -16,7 +16,8 @@ void insereSubarvore(ArvGen* a,char *c) {
     ArvGen *sa ;
     ArvGen *q,*p,*r,*t;
 
-    int i,res=0;
+    size_t i;
+    int res=0;
     sa=(ArvGen *) malloc(sizeof(ArvGen));
     sa->info = c[0];
     sa->prim = NULL;
