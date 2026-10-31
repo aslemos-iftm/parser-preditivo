@@ -1,4 +1,5 @@
 #include "ParserPreditivo.h"
+#include <stdio.h>
 #include <string.h>
 
 void preencheTabela(Tabela *t, int n)

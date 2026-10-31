@@ -1,5 +1,7 @@
 #include "ArvoreAutomato.h"
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 ArvGen* criaArv (char c) {
     ArvGen *a =(ArvGen *) malloc(sizeof(ArvGen));
