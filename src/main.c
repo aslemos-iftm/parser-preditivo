@@ -11,7 +11,7 @@ int main ()
     Tabela tab[TABSIZE];
     ArvGen* a = criaArv('S');
     
-    preencheTabela(tab,TABSIZE);
+    preencheTabela(tab);
 
     printf("Entre com a expressao a ser reconhecida pela linguagem (maximo %d caracteres):", INPUTSIZE);
     scanf("%s",expressao);
