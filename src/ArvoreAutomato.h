@@ -10,7 +10,7 @@ typedef struct arvgen ArvGen;
 
 ArvGen* criaArv (char c);
 void insereSubarvore(ArvGen* a,char *c);
-int insereProd(ArvGen *r,ArvGen *novo,ArvGen *pai);
+int insereProd(ArvGen *r,ArvGen *novo);
 void imprimeArv (ArvGen* a,int l);
 int buscaArv (ArvGen* a, char c);
 void liberaArv (ArvGen* a);

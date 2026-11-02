@@ -13,5 +13,5 @@ void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a);
 
 int simboloTerminal(char s);
 
-void preencheTabela(Tabela *t, int n);
+void preencheTabela(Tabela *t);
 int buscaRegra(Tabela *t,char tpinfo,char expinfo);
