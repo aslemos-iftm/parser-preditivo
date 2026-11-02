@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <string.h>
 
-void preencheTabela(Tabela *t, int n)
+void preencheTabela(Tabela *t)
 {
-    int i;
     t[0].entrada='a';
     t[0].topo='S';
     strcpy(t[0].regra,"AR");

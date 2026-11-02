@@ -45,12 +45,12 @@ void insereSubarvore(ArvGen* a,char *c) {
         for(p=a->prim;p!=NULL;p=p->prox){
             p->ant=a;
         }
-        res=insereProd(q,sa,a);
+        res=insereProd(q,sa);
     }
 }
 
-int insereProd(ArvGen *r,ArvGen *novo,ArvGen *pai){
-    ArvGen *q,*p,*t;
+int insereProd(ArvGen *r,ArvGen *novo){
+    ArvGen *q,*p;
     q=r;p=r;
 
     while(q!=NULL &&(q->info!='S' && q->info!='R' && q->info!='A' && q->info!='B' && q->info!='X')){
@@ -64,8 +64,8 @@ int insereProd(ArvGen *r,ArvGen *novo,ArvGen *pai){
         }
     }
     else if(q!=NULL && q->prim!=NULL){
-            if (!insereProd(q->prim,novo,q)){
-                if (!insereProd(q->prox,novo,q->ant)){
+            if (!insereProd(q->prim,novo)){
+                if (!insereProd(q->prox,novo)){
                     return 0;
                 }
             }
@@ -78,7 +78,6 @@ int insereProd(ArvGen *r,ArvGen *novo,ArvGen *pai){
 void imprimeArv (ArvGen* a,int l)
 {
     ArvGen* p;
-    int i,qtde=0;
     printf("\nNivel:%d - ",l);
     printf("Simbolo:%c - ",a->info);
     if(a->ant!=NULL)

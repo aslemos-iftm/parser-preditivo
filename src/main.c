@@ -6,14 +6,12 @@
 
 int main ()
 {
-    char c,expressao[INPUTSIZE];
+    char expressao[INPUTSIZE];
     Pilha* pilhaExp;
     Tabela tab[TABSIZE];
-    int i;
     ArvGen* a = criaArv('S');
-    char v;
+    
     preencheTabela(tab,TABSIZE);
-
 
     printf("Entre com a expressao a ser reconhecida pela linguagem (maximo %d caracteres):", INPUTSIZE);
     scanf("%s",expressao);
