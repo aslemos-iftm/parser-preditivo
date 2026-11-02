@@ -46,6 +46,8 @@ void insereSubarvore(ArvGen* a,char *c) {
             p->ant=a;
         }
         res=insereProd(q,sa);
+        if (!res)
+            printf("\nErro: nao foi possivel inserir a producao na arvore.\n");
     }
 }
 
