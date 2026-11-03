@@ -63,7 +63,7 @@ void preencheTabela(Tabela *t)
     strcpy(t[18].regra,"(S)");
 }
 
-void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
+int predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a,char *mensagem) {
     size_t i=0;
     int j,k;
 
@@ -71,8 +71,8 @@ void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
 
         if (simboloTerminal(p->topo->info)) {
             if (p->topo->info!= expressao[i]){
-                printf("\nEsperava encontrar o simbolo %c e foi encontrado o simbolo %c\n",p->topo->info,expressao[i]);
-                return;
+                sprintf(mensagem,"Esperava encontrar o simbolo %c e foi encontrado o simbolo %c",p->topo->info,expressao[i]);
+                return 0;
             }
             else {
                 pop(p);
@@ -84,8 +84,8 @@ void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
             //printf("Regra %d\n",k);
 
             if (k==-1){
-                printf("\nNao esperava encontrar o simbolo %c\n",expressao[i]);
-                return;
+                sprintf(mensagem,"Nao esperava encontrar o simbolo %c",expressao[i]);
+                return 0;
             }
             else {
                 //printf("\nVou desempilhar %c",p->topo->info);
@@ -98,12 +98,18 @@ void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
         }
     }
 
-    if(vazia(p)==0) //Fim inesperado da entrada
-        printf("\nFim inesperado da entrada\n");
-    else if((i+1)<strlen(expressao))
-            printf("\nFim inesperado da pilha\n");
-         else
-            printf("\nExpressao reconhecida pela linguagem!\n");
+    if(vazia(p)==0){ //Fim inesperado da entrada
+        sprintf(mensagem,"Fim inesperado da entrada");
+        return 0;
+    }
+    else if((i+1)<strlen(expressao)){
+            sprintf(mensagem,"Fim inesperado da pilha");
+            return 0;
+         }
+         else {
+            sprintf(mensagem,"Expressao reconhecida pela linguagem!");
+            return 1;
+         }
 }
 
 int simboloTerminal(char s) {

@@ -108,6 +108,26 @@ void imprimeExp(ArvGen* a,int l,int m)
     }
 }
 
+//Calcula o nivel e a coluna de cada no, para o desenho da arvore.
+//Cada folha ocupa a proxima coluna livre; cada no com filhos fica
+//centralizado entre o primeiro e o ultimo filho.
+//Devolve a proxima coluna livre (na chamada inicial, o total de folhas).
+int calculaPosicoes(ArvGen *a,int nivel,int proxColuna)
+{
+    ArvGen *p,*ultimo=NULL;
+    a->nivel=nivel;
+
+    if(a->prim==NULL){ //Folha: ocupa a proxima coluna livre
+        a->coluna=proxColuna;
+        return proxColuna+1;
+    }
+    for(p=a->prim;p!=NULL;p=p->prox){ //Posiciona os filhos
+        proxColuna=calculaPosicoes(p,nivel+1,proxColuna);
+        ultimo=p;
+    }
+    a->coluna=(a->prim->coluna+ultimo->coluna)/2; //Centraliza o pai
+    return proxColuna;
+}
 
 int buscaArv (ArvGen* a, char c)
 {
