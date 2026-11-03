@@ -6,8 +6,8 @@
 #define ALTURA 700        //Altura da janela, em pixels
 #define MARGEM 30         //Distancia entre o desenho e a borda da janela
 #define TOPO_ARVORE 170   //Altura onde comeca a area da arvore
-#define ESPACO_MAXIMO 80  //Maior distancia entre dois nos vizinhos
-#define RAIO_MAXIMO 18    //Maior raio dos circulos dos nos
+#define ESPACO_MAXIMO 80  //Maior distancia entre dois nodos vizinhos
+#define RAIO_MAXIMO 18    //Maior raio dos circulos dos nodos
 
 //Medidas usadas para desenhar a arvore na janela
 struct desenho {
@@ -33,8 +33,8 @@ int contaNiveis(ArvGen *a)
     return maior+1;
 }
 
-//Converte a posicao do no (coluna e nivel) em pixels na janela
-Vector2 centroNo(ArvGen *a,Desenho d)
+//Converte a posicao do nodo (coluna e nivel) em pixels na janela
+Vector2 centroNodo(ArvGen *a,Desenho d)
 {
     Vector2 centro;
     centro.x=d.inicioX+a->coluna*d.espacoH;
@@ -50,12 +50,12 @@ void escreveCentralizado(Font fonte,const char *texto,Vector2 centro,float taman
     DrawTextEx(fonte,texto,posicao,tamanho,0,BLACK);
 }
 
-//Escolhe a cor do no:
+//Escolhe a cor do nodo:
 //vazio (producao vazia), terminal, nao terminal expandido ou nao expandido
-Color corNo(ArvGen *a)
+Color corNodo(ArvGen *a)
 {
     if(a->info=='\0')
-        return LIGHTGRAY;  //No vazio
+        return LIGHTGRAY;  //Nodo vazio
     if(simboloTerminal(a->info))
         return SKYBLUE;    //Terminal
     if(a->prim==NULL)
@@ -63,12 +63,12 @@ Color corNo(ArvGen *a)
     return LIME;           //Nao terminal expandido
 }
 
-//Desenha um no: circulo colorido, contorno e simbolo
-void desenhaNo(ArvGen *a,Vector2 centro,Desenho d)
+//Desenha um nodo: circulo colorido, contorno e simbolo
+void desenhaNodo(ArvGen *a,Vector2 centro,Desenho d)
 {
     char simbolo[2]={a->info,'\0'};
 
-    DrawCircleV(centro,d.raio,corNo(a));
+    DrawCircleV(centro,d.raio,corNodo(a));
     DrawCircleLines((int)centro.x,(int)centro.y,d.raio,BLACK);
     if(a->info=='\0')
         escreveCentralizado(d.fonte,"ε",centro,d.raio*1.3f);
@@ -77,17 +77,17 @@ void desenhaNo(ArvGen *a,Vector2 centro,Desenho d)
 }
 
 //Desenha a arvore: primeiro as linhas ate cada filho e os filhos,
-//depois o proprio no, que fica por cima das linhas
+//depois o proprio nodo, que fica por cima das linhas
 void desenhaArvore(ArvGen *a,Desenho d)
 {
     ArvGen *p;
-    Vector2 centro=centroNo(a,d);
+    Vector2 centro=centroNodo(a,d);
 
     for(p=a->prim;p!=NULL;p=p->prox){
-        DrawLineEx(centro,centroNo(p,d),2,DARKGRAY);
+        DrawLineEx(centro,centroNodo(p,d),2,DARKGRAY);
         desenhaArvore(p,d);
     }
-    desenhaNo(a,centro,d);
+    desenhaNodo(a,centro,d);
 }
 
 //Calcula as medidas do desenho para que a arvore caiba na janela
@@ -106,7 +106,7 @@ Desenho calculaDesenho(Font fonte,int folhas,int niveis)
         d.espacoV=ESPACO_MAXIMO;
 
     d.raio=RAIO_MAXIMO;            //O circulo nao pode ser maior
-    if(d.raio>d.espacoH*0.4f)      //que o espaco entre os nos
+    if(d.raio>d.espacoH*0.4f)      //que o espaco entre os nodos
         d.raio=d.espacoH*0.4f;
     if(d.raio>d.espacoV*0.4f)
         d.raio=d.espacoV*0.4f;

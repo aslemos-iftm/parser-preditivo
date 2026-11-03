@@ -1,15 +1,15 @@
 #define TABSIZE 19
 #define INPUTSIZE 20
 
-struct no { //Define o elemento da pilha
+struct nodo { //Define o elemento da pilha
     char info;
-    struct no* prox;
+    struct nodo* prox;
 };
 
-typedef struct no No;
+typedef struct nodo Nodo;
 
 struct pilha {
-    No* topo;
+    Nodo* topo;
 };
 
 typedef struct pilha Pilha;

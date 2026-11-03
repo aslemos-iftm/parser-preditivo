@@ -4,8 +4,8 @@ struct arvgen {
     struct arvgen *prim;
     struct arvgen *prox;
     struct arvgen *ant;
-    float coluna; //Posicao horizontal do no, calculada por calculaPosicoes
-    int nivel;    //Profundidade do no (raiz = 0)
+    float coluna; //Posicao horizontal do nodo, calculada por calculaPosicoes
+    int nivel;    //Profundidade do nodo (raiz = 0)
 };
 
 typedef struct arvgen ArvGen;

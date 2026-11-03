@@ -13,7 +13,7 @@ Pilha* cria (void)
 //Insere elemento no topo
 void push (Pilha* p, char v)
 {
-    No* n= (No*) malloc(sizeof(No));
+    Nodo* n= (Nodo*) malloc(sizeof(Nodo));
     n->info = v;
     n->prox = p->topo;
     p->topo =n;
@@ -22,7 +22,7 @@ void push (Pilha* p, char v)
 char pop (Pilha* p)
 {
     char v;
-    No* n;
+    Nodo*n;
     if (vazia(p)) {
         printf("Pilha vazia.\n");
         exit(1); // aborta programa
@@ -44,9 +44,9 @@ int vazia (Pilha* p)
 //Libera memoria alocada para elementos da pilha
 void libera (Pilha* p)
 {
-    No* q = p->topo;
+    Nodo*q = p->topo;
     while (q!=NULL) {
-        No* t = q->prox;
+        Nodo*t = q->prox;
         free(q);
         q = t;
     }
@@ -55,14 +55,14 @@ void libera (Pilha* p)
 //Imprime o conteúdo da pilha
 void imprime (Pilha* p)
 {
-    No* q;
+    Nodo*q;
     for (q=p->topo; q!=NULL; q=q->prox)
     printf("%c\n",q->info);
 }
 
 int comprimento (Pilha* p)
 {
-    No* q;
+    Nodo*q;
     int qtde=0;
     for (q=p->topo; q!=NULL; q=q->prox)
         qtde++;
@@ -72,7 +72,7 @@ int comprimento (Pilha* p)
 
 int qtdeOcorrencias (Pilha* p,char elem)
 {
-    No* q;
+    Nodo*q;
     int qtde=0;
     for (q=p->topo; q!=NULL; q=q->prox){
         if(q->info==elem)
@@ -83,7 +83,7 @@ int qtdeOcorrencias (Pilha* p,char elem)
 
 char maiorPilha (Pilha* p)
 {
-    No* q;
+    Nodo*q;
     char maior=p->topo->info;
     for (q=p->topo; q!=NULL; q=q->prox){
         if(q->info>maior)
