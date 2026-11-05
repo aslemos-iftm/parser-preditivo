@@ -18,8 +18,12 @@ Arquivos em `src/`:
 
 - `PilhaAutomato.c/.h`: a pilha (lista encadeada de `char`).
 - `ArvoreAutomato.c/.h`: a árvore genérica (primeiro filho / próximo irmão / pai).
-- `ParserPreditivo.c/.h`: a tabela de lookahead e o laço do parser.
-- `main.c`: entrada e saída.
+- `ParserPreditivo.c/.h`: a tabela de lookahead e o laço do parser. O resultado da análise é escrito no vetor `mensagem` (tamanho `MSGSIZE`), não impresso; quem chama decide onde mostrá-lo.
+- `main.c`: entrada e saída no console.
+
+Arquivo em `gui/`:
+
+- `InterfaceGrafica.c`: interface gráfica com a raylib (campo de texto, mensagem do parser e desenho da árvore, com ε nos nós vazios). Tem o seu próprio `main`, por isso fica fora de `src/`. A cor da mensagem depende de comparar o texto com "Expressao reconhecida pela linguagem!": se essa frase mudar no parser, mude aqui também.
 
 ## Quem trabalha aqui e como
 
@@ -60,3 +64,15 @@ Entradas de teste (a entrada termina com `$`):
 | `a+b*c` | erro: fim inesperado da entrada |
 
 Depois de qualquer mudança, compile e rode estas entradas antes de dizer que terminou.
+
+### Interface gráfica
+
+A raylib (6.0) está instalada no MSYS2 (UCRT64). Também deve compilar sem avisos:
+
+```
+gcc -Wall -Wextra -std=c11 gui/InterfaceGrafica.c src/ArvoreAutomato.c src/PilhaAutomato.c src/ParserPreditivo.c -o parser-gui -lraylib
+```
+
+Se a mudança afetar o parser ou a interface, teste as mesmas entradas na janela (digite e tecle Enter). O executável depende de `libraylib.dll` e `glfw3.dll`, em `C:\msys64\ucrt64\bin`.
+
+Ao automatizar o teste da janela, segure Enter e Backspace por cerca de 100 ms (por exemplo, com `keybd_event`). O `SendKeys` aperta e solta a tecla dentro de um mesmo quadro, e a raylib não registra o toque. Pelo mesmo motivo, não envie mais de 16 caracteres de uma vez.
