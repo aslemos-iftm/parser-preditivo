@@ -7,6 +7,7 @@
 int main ()
 {
     char expressao[INPUTSIZE];
+    char mensagem[MSGSIZE]; //Recebe o resultado do parser
     Pilha* pilhaExp;
     Tabela tab[TABSIZE];
     ArvGen* a = criaArv('S');
@@ -18,7 +19,8 @@ int main ()
     pilhaExp=cria();
     push(pilhaExp,'S');
 
-    predictiveParse(tab, pilhaExp,expressao,a);
+    predictiveParse(tab, pilhaExp,expressao,a,mensagem);
+    printf("\n%s\n",mensagem);
 
     imprimeArv(a,0);
     printf("\nExpressao com colchetes, obtida pela arvore:\n");
