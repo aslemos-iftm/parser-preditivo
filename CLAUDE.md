@@ -21,6 +21,12 @@ Arquivos em `src/`:
 - `ParserPreditivo.c/.h`: a tabela de lookahead e o laço do parser.
 - `main.c`: entrada e saída.
 
+Em `gui/`:
+
+- `gui.c`: interface gráfica (raylib) com um campo para a expressão, a mensagem do parser e o desenho da árvore. Usa as funções de `src/` sem alterá-las; o campo de texto e o botão são feitos à mão, sem a raygui. Fica fora de `src/` porque tem sua própria função `main`.
+
+`predictiveParse` não imprime nada: escreve o resultado no vetor `mensagem` (de `MSGSIZE` caracteres), e quem chama decide onde mostrá-lo (terminal ou janela).
+
 ## Quem trabalha aqui e como
 
 O professor quer **entender cada mudança**, mesmo sem escrever o código. Por isso:
@@ -60,3 +66,15 @@ Entradas de teste (a entrada termina com `$`):
 | `a+b*c` | erro: fim inesperado da entrada |
 
 Depois de qualquer mudança, compile e rode estas entradas antes de dizer que terminou.
+
+### Interface gráfica
+
+Usa a raylib instalada no MSYS2 (`C:\msys64\ucrt64`). Compilar a partir da pasta do projeto:
+
+```
+gcc -Wall -Wextra -std=c11 -Isrc gui/gui.c src/ArvoreAutomato.c src/PilhaAutomato.c src/ParserPreditivo.c -o parser-gui -lraylib -lopengl32 -lgdi32 -lwinmm
+```
+
+- O executável depende da `libraylib.dll`, que fica em `C:\msys64\ucrt64\bin`. A compilação estática (`-static`) falhou no linker, sem mensagem de erro.
+- O Controle de Aplicativo do Windows bloqueia a execução do `parser-gui.exe` pela IA. Quem testa a janela é o professor.
+- **Nunca** testar a janela simulando teclas (SendKeys ou similar): se a janela não abrir, as teclas vão para outro programa, como o chat.
