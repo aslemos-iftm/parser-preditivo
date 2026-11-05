@@ -9,7 +9,11 @@ struct lookahead{
 };
 typedef struct lookahead Tabela;
 
-void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a);
+#define MSGSIZE 100 //Tamanho maximo da mensagem com o resultado da analise
+
+//A mensagem com o resultado da analise e escrita no vetor "mensagem",
+//para que quem chama decida onde mostra-la (terminal ou janela)
+void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a,char *mensagem);
 
 int simboloTerminal(char s);
 

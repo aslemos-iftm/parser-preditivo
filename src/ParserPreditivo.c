@@ -63,7 +63,7 @@ void preencheTabela(Tabela *t)
     strcpy(t[18].regra,"(S)");
 }
 
-void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
+void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a,char *mensagem) {
     size_t i=0;
     int j,k;
 
@@ -71,7 +71,7 @@ void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
 
         if (simboloTerminal(p->topo->info)) {
             if (p->topo->info!= expressao[i]){
-                printf("\nEsperava encontrar o simbolo %c e foi encontrado o simbolo %c\n",p->topo->info,expressao[i]);
+                snprintf(mensagem,MSGSIZE,"Esperava encontrar o simbolo %c e foi encontrado o simbolo %c",p->topo->info,expressao[i]);
                 return;
             }
             else {
@@ -84,7 +84,7 @@ void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
             //printf("Regra %d\n",k);
 
             if (k==-1){
-                printf("\nNao esperava encontrar o simbolo %c\n",expressao[i]);
+                snprintf(mensagem,MSGSIZE,"Nao esperava encontrar o simbolo %c",expressao[i]);
                 return;
             }
             else {
@@ -99,11 +99,11 @@ void predictiveParse(Tabela *t, Pilha *p,char *expressao,ArvGen *a) {
     }
 
     if(vazia(p)==0) //Fim inesperado da entrada
-        printf("\nFim inesperado da entrada\n");
+        snprintf(mensagem,MSGSIZE,"Fim inesperado da entrada");
     else if((i+1)<strlen(expressao))
-            printf("\nFim inesperado da pilha\n");
+            snprintf(mensagem,MSGSIZE,"Fim inesperado da pilha");
          else
-            printf("\nExpressao reconhecida pela linguagem!\n");
+            snprintf(mensagem,MSGSIZE,"Expressao reconhecida pela linguagem!");
 }
 
 int simboloTerminal(char s) {
