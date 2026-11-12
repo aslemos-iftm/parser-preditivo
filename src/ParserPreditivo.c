@@ -122,3 +122,38 @@ int buscaRegra(Tabela *t,char tpinfo,char expinfo){
 
     return -1;
 }
+
+//A mesma producao aparece na tabela uma vez para cada simbolo de lookahead
+//(S -> AR aparece com a, b, c e "("). Aqui cada uma e guardada uma unica vez.
+int extraiGramatica(Tabela *t, Producao *g){
+    int i,j,k;
+    int qtdNaoTerminais=0;
+    int jaExiste;
+
+    for(i=0;i<TABSIZE;i++){
+        //Procura o nao terminal desta entrada entre os ja encontrados
+        j=0;
+        while(j<qtdNaoTerminais && g[j].naoTerminal!=t[i].topo)
+            j++;
+
+        //Se e a primeira vez que ele aparece, cria uma nova linha da gramatica
+        if(j==qtdNaoTerminais){
+            g[j].naoTerminal=t[i].topo;
+            g[j].qtdAlternativas=0;
+            qtdNaoTerminais++;
+        }
+
+        //Verifica se este lado direito ja foi guardado
+        jaExiste=0;
+        for(k=0;k<g[j].qtdAlternativas;k++)
+            if(strcmp(g[j].alternativas[k],t[i].regra)==0)
+                jaExiste=1;
+
+        if(!jaExiste){
+            strcpy(g[j].alternativas[g[j].qtdAlternativas],t[i].regra);
+            g[j].qtdAlternativas++;
+        }
+    }
+
+    return qtdNaoTerminais;
+}

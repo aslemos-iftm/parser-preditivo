@@ -1,15 +1,18 @@
 //Interface grafica do parser preditivo, feita com a biblioteca raylib.
 //Ha um campo para digitar a expressao (terminada em $), um botao "Analisar",
-//a mensagem com o resultado e o desenho da arvore de derivacao.
+//a mensagem com o resultado, o desenho da arvore de derivacao e um painel
+//com a gramatica, que pode ser ocultado para dar mais espaco a arvore.
 
 #include <string.h>
 #include "raylib.h"
 #include "ParserPreditivo.h"
 
-#define LARGURA_JANELA 1100
+#define LARGURA_JANELA 1300
 #define ALTURA_JANELA 650
 #define TAM_FONTE 20
 #define RAIO 18 //Raio do circulo de cada no da arvore
+#define LARGURA_PAINEL 220 //Largura do painel da gramatica, a direita
+#define TAM_LINHA 100 //Tamanho maximo do texto de uma linha da gramatica
 
 Font fonte; //Fonte usada em todos os textos da janela
 
@@ -92,6 +95,30 @@ void desenhaLegenda(float x, float y, Color cor, const char *texto) {
     DrawTextEx(fonte, texto, (Vector2){ x + 15, y - 9 }, 18, 1, DARKGRAY);
 }
 
+//Monta o texto de uma linha da gramatica, por exemplo "R → + A R | ε".
+//Os simbolos do lado direito sao separados por espacos, para facilitar a leitura.
+void montaLinha(Producao *p, char *linha) {
+    int i, j;
+    char simbolo[3];
+
+    linha[0] = p->naoTerminal;
+    linha[1] = '\0';
+    strcat(linha, " →");
+    for (i = 0; i < p->qtdAlternativas; i++) {
+        if (i > 0)
+            strcat(linha, " |");
+        if (p->alternativas[i][0] == '\0')
+            strcat(linha, " ε"); //Producao vazia
+        else
+            for (j = 0; p->alternativas[i][j] != '\0'; j++) {
+                simbolo[0] = ' ';
+                simbolo[1] = p->alternativas[i][j];
+                simbolo[2] = '\0';
+                strcat(linha, simbolo);
+            }
+    }
+}
+
 int main(void) {
     char expressao[INPUTSIZE] = "";  //O que foi digitado no campo
     int tamanho = 0;                 //Quantos caracteres ja foram digitados
@@ -102,26 +129,41 @@ int main(void) {
     int caractere;
     int altura;
     float distNiveis;
-    int codigos[96];
+    int codigos[97];
     int i;
+    Producao gramatica[MAXNT];       //Gramatica reconstruida a partir da tabela
+    int qtdNaoTerminais;
+    char linhas[MAXNT][TAM_LINHA];   //Texto de cada linha da gramatica
+    int mostraGramatica = 1;         //1: painel visivel; 0: painel oculto
+    float larguraArvore;
 
     Rectangle campo = { 140, 30, 400, 40 };  //Campo de texto
     Rectangle botao = { 560, 30, 130, 40 };  //Botao "Analisar"
+    Rectangle botaoGramatica = { 710, 30, 220, 40 };  //Botao que mostra/oculta a gramatica
+    Rectangle painel = { LARGURA_JANELA - LARGURA_PAINEL - 20, 90, LARGURA_PAINEL, 0 };
     Vector2 cursor;
 
     preencheTabela(tab);
+
+    //A gramatica nao muda durante o programa: montamos o texto uma vez so
+    qtdNaoTerminais = extraiGramatica(tab, gramatica);
+    for (i = 0; i < qtdNaoTerminais; i++)
+        montaLinha(&gramatica[i], linhas[i]);
+    painel.height = 50 + 30 * qtdNaoTerminais; //Titulo mais uma linha por nao terminal
 
     InitWindow(LARGURA_JANELA, ALTURA_JANELA, "Parser preditivo LL(1)");
     SetTargetFPS(60);
 
     //A fonte padrao da raylib nao tem a letra grega epsilon.
-    //Carregamos a Arial com os caracteres comuns (32 a 126) e mais o epsilon (codigo 0x3B5).
+    //Carregamos a Arial com os caracteres comuns (32 a 126), o epsilon (codigo 0x3B5)
+    //e a seta usada nas producoes (codigo 0x2192).
     for (i = 0; i < 95; i++)
         codigos[i] = 32 + i;
     codigos[95] = 0x3B5;
-    fonte = LoadFontEx("C:/Windows/Fonts/arial.ttf", TAM_FONTE, codigos, 96);
+    codigos[96] = 0x2192;
+    fonte = LoadFontEx("C:/Windows/Fonts/arial.ttf", TAM_FONTE, codigos, 97);
     if (!IsFontValid(fonte))
-        fonte = GetFontDefault(); //Sem a Arial, o epsilon aparece como '?'
+        fonte = GetFontDefault(); //Sem a Arial, o epsilon e a seta aparecem como '?'
 
     while (!WindowShouldClose()) {
 
@@ -160,6 +202,11 @@ int main(void) {
             libera(pilhaExp);
         }
 
+        //---------- Clique no botao da gramatica: mostra ou oculta o painel ----------
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && CheckCollisionPointRec(GetMousePosition(), botaoGramatica))
+            mostraGramatica = !mostraGramatica;
+
         //---------- Desenho da janela ----------
 
         BeginDrawing();
@@ -182,16 +229,39 @@ int main(void) {
         DrawRectangleLinesEx(botao, 2, DARKGRAY);
         escreveCentralizado("Analisar", botao.x + botao.width/2, botao.y + botao.height/2, BLACK);
 
+        //Botao da gramatica: o texto muda conforme o painel esta visivel ou nao
+        DrawRectangleRec(botaoGramatica, LIGHTGRAY);
+        DrawRectangleLinesEx(botaoGramatica, 2, DARKGRAY);
+        if (mostraGramatica)
+            escreveCentralizado("Ocultar gramatica", botaoGramatica.x + botaoGramatica.width/2, botaoGramatica.y + botaoGramatica.height/2, BLACK);
+        else
+            escreveCentralizado("Mostrar gramatica", botaoGramatica.x + botaoGramatica.width/2, botaoGramatica.y + botaoGramatica.height/2, BLACK);
+
         //Mensagem com o resultado
         DrawTextEx(fonte, mensagem, (Vector2){ 20, 90 }, TAM_FONTE, 1, BLACK);
 
-        //Arvore: os niveis sao espacados para caber na area abaixo da mensagem
+        //Painel da gramatica: um titulo e uma linha por nao terminal
+        if (mostraGramatica) {
+            DrawRectangleRec(painel, WHITE);
+            DrawRectangleLinesEx(painel, 2, DARKGRAY);
+            DrawTextEx(fonte, "Gramatica", (Vector2){ painel.x + 15, painel.y + 12 }, TAM_FONTE, 1, DARKGRAY);
+            for (i = 0; i < qtdNaoTerminais; i++)
+                DrawTextEx(fonte, linhas[i], (Vector2){ painel.x + 15, painel.y + 45 + 30 * i }, TAM_FONTE, 1, BLACK);
+        }
+
+        //Arvore: com o painel visivel, ela usa so a largura que sobra a esquerda dele
+        if (mostraGramatica)
+            larguraArvore = LARGURA_JANELA - 40 - LARGURA_PAINEL - 20;
+        else
+            larguraArvore = LARGURA_JANELA - 40;
+
+        //Os niveis sao espacados para caber na area abaixo da mensagem
         if (a != NULL) {
             altura = alturaArv(a);
             distNiveis = 70;
             if (altura > 1 && (altura - 1) * distNiveis > ALTURA_JANELA - 230)
                 distNiveis = (float)(ALTURA_JANELA - 230) / (altura - 1);
-            desenhaArv(a, 20, LARGURA_JANELA - 40, 160, distNiveis);
+            desenhaArv(a, 20, larguraArvore, 160, distNiveis);
         }
 
         //Legenda
