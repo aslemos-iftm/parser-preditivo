@@ -64,6 +64,7 @@ Font carregaFonte(void)
     for (c = 0xC0; c <= 0xFF; c++) //Letras acentuadas (á, ã, ç, é, ...)
         codigos[n++] = c;
     codigos[n++] = 0x03B5;         //Letra grega epsilon (ε)
+    codigos[n++] = 0x2192;         //Seta das producoes (→)
 
     f = LoadFontEx(ARQUIVO_FONTE, 64, codigos, n);
     SetTextureFilter(f.texture, TEXTURE_FILTER_BILINEAR); //Suaviza a letra ao reduzi-la
@@ -140,6 +141,89 @@ ArvGen* analisa(Tabela *tab, char *expressao, char *mensagem)
     predictiveParse(tab, pilhaExp, expressao, a, mensagem);
     libera(pilhaExp);
     return a;
+}
+
+
+/* ---------- Gramatica ---------- */
+
+//A gramatica mostrada na janela e montada a partir da tabela de lookahead.
+//Assim, ela e sempre a gramatica que o parser de fato usa.
+//
+//Na tabela, a mesma regra aparece varias vezes, uma para cada simbolo de
+//lookahead (por exemplo, S -> AR aparece com a, b, c e '('). Por isso,
+//antes de escrever algo, verificamos se ja apareceu numa linha anterior.
+
+//Devolve 1 se o nao terminal da linha i da tabela aparece ali pela
+//primeira vez, e 0 se ele ja apareceu numa linha anterior.
+int topoNovo(Tabela *tab, int i)
+{
+    int j;
+
+    for (j = 0; j < i; j++)
+        if (tab[j].topo == tab[i].topo)
+            return 0;
+    return 1;
+}
+
+//Devolve 1 se a regra da linha i da tabela (nao terminal e lado direito)
+//aparece ali pela primeira vez, e 0 se ja apareceu numa linha anterior.
+int regraNova(Tabela *tab, int i)
+{
+    int j;
+
+    for (j = 0; j < i; j++)
+        if (tab[j].topo == tab[i].topo && strcmp(tab[j].regra, tab[i].regra) == 0)
+            return 0;
+    return 1;
+}
+
+//Escreve a gramatica, um nao terminal por linha, por exemplo:
+//  R → + A R | ε
+//A regra vazia ("" na tabela) aparece como ε.
+void desenhaGramatica(Tabela *tab, float x, float y)
+{
+    char linha[400]; //Cabe ate TABSIZE regras de 9 simbolos cada
+    char simbolo[3]; //Um espaco, um simbolo e o '\0'
+    int i, j, k;
+    int primeiraRegra;
+
+    escreve("Gramática:", x, y, 20, BLACK);
+
+    for (i = 0; i < TABSIZE; i++) {
+        if (!topoNovo(tab, i))
+            continue; //Este nao terminal ja tem a sua linha
+
+        //Comeca a linha com o nao terminal e a seta, por exemplo "R →"
+        linha[0] = tab[i].topo;
+        linha[1] = '\0';
+        strcat(linha, " →");
+
+        //Acrescenta as regras deste nao terminal, separadas por "|"
+        primeiraRegra = 1;
+        for (k = i; k < TABSIZE; k++) {
+            if (tab[k].topo != tab[i].topo || !regraNova(tab, k))
+                continue;
+
+            if (!primeiraRegra)
+                strcat(linha, " |");
+            primeiraRegra = 0;
+
+            if (tab[k].regra[0] == '\0')
+                strcat(linha, " ε"); //Regra vazia
+            else {
+                //Copia os simbolos da regra, com um espaco antes de cada um
+                for (j = 0; tab[k].regra[j] != '\0'; j++) {
+                    simbolo[0] = ' ';
+                    simbolo[1] = tab[k].regra[j];
+                    simbolo[2] = '\0';
+                    strcat(linha, simbolo);
+                }
+            }
+        }
+
+        y = y + 21; //Desce para a proxima linha
+        escreve(linha, x, y, 20, DARKGRAY);
+    }
 }
 
 
@@ -318,6 +402,7 @@ int main(void)
         desenhaCampo(expressao, MARGEM + 130, 72);
         escreve("Enter: analisar     Backspace: apagar", MARGEM + 130, 117, 18, GRAY);
         escreve(mensagem, MARGEM, 150, 26, corMensagem);
+        desenhaGramatica(tab, MARGEM + 540, 18);
         desenhaLegenda();
 
         if (arvore != NULL) {
