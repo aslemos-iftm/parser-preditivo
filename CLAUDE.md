@@ -76,5 +76,6 @@ gcc -Wall -Wextra -std=c11 -Isrc gui/gui.c src/ArvoreAutomato.c src/PilhaAutomat
 ```
 
 - O executável depende da `libraylib.dll`, que fica em `C:\msys64\ucrt64\bin`. A compilação estática (`-static`) falhou no linker, sem mensagem de erro.
-- O Controle de Aplicativo do Windows bloqueia a execução do `parser-gui.exe` pela IA. Quem testa a janela é o professor.
+- Quem testa a janela é o professor; a IA não tenta abri-la.
+- O Controle Inteligente de Aplicativos (Smart App Control) do Windows está ligado nesta máquina e julga **cada arquivo** `.exe`, não o programa. Como o `gcc` grava a data da compilação dentro do executável, cada compilação gera um arquivo novo, que pode ser aceito ou bloqueado ("não seguro"), mesmo sem mudança no código e mesmo como Administrador. Isso já aconteceu com o `parser-gui.exe` e com o `parser.exe`. Se houver bloqueio, recompilar costuma resolver; os bloqueios aparecem no log `Microsoft-Windows-CodeIntegrity/Operational` (eventos 3033 e 3077).
 - **Nunca** testar a janela simulando teclas (SendKeys ou similar): se a janela não abrir, as teclas vão para outro programa, como o chat.
